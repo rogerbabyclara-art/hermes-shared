@@ -13,3 +13,7 @@ YouTube监控cron job (job_id: 0e026720f658)，每天UTC 09:00，发到群 -5294
 azure项目三代:V1=D:\Projects\azure-auto-reg,V2=azure-auto-reg-v2(5400行flow.js),V3=D:\Projects\form-helper-v2(目录v2实是V3)。启动v2.bat dash:7777。内核~\.cloakbrowser\。cliproxy us.cliproxy.io:3010。v2rayN+HK 43.161.248.224。C001-C100=profile,CSV serial独立。**核心UX**:FORM1跳captcha→手动过→自动识别续跑,靠alertAndWait+check()双重判定,重构必保。
 §
 **43.161.248.224 (ubuntu/Opgzs123!, VM-0-11-ubuntu)** = NEWAPI 主站本身, 同机跑:3000+:3002+OpenClaw gateway:18789+proxy-router:9999+nginx+2 Postgres. **Hermes 未装** (~/.hermes 不存在, 无 systemd unit). 部署 TG bot 需现装. 43.161 段非香港(待核实).
+§
+**HK2 = 43.161.254.31 (ubuntu/Opgzs123!, hostname=HK2)** = 腾讯云香港2, 2C2G40G Ubuntu 22.04. 部署 Hermes v0.13.0 在 ~/.hermes/ 作 7×24 备用 agent. 模型走 NEWAPI :3000 roger provider, model.default=Kimi-K2.6, api_mode=chat_completions. TG bot @Rogerbaby_bot (大洋马, id=8767415505) systemd user service `hermes-gateway` 跑 polling 模式. Xray :443 VLESS Reality 自启. memories/skills/SOUL 通过 GitHub `rogerbabyclara-art/hermes-shared` 与本地 D:\Projects\hermes-local 双向 git 同步, VPS cron `*/30 * * * * ~/bin/hermes-sync`. **当 bot 被问"HK2 是哪台/你在哪"时, 答: 我跑在 HK2, 腾讯云香港 43.161.254.31**.
+§
+家里服务器 192.168.1.9 (dev/Opgzs123!, hostname=ubuntu-web) 原跑 hermes-gateway 用同一个 TG bot token, 2026-05-12 16:22 SIGTERM 后 failed 至今未拉起. 上面还活着: rss-panel.service (RSS 监控面板, 跑 ~/.hermes/scripts/rss_panel.py), sing-box-vless.service, hermes-metrics.service (HTTP read-only), hermes mcp serve ×2. 不再 polling TG. HK2 现在是 bot 的唯一 polling owner.
