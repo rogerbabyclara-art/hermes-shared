@@ -39,6 +39,17 @@ __pycache__/
 pairing/
 hooks/
 
+# Hermes 运行时缓存
+.skills_prompt_snapshot.json
+.curator_state
+.usage.json
+.bundled_manifest
+.tirith-install-failed
+skills/.curator_state
+skills/.usage.json
+skills/.bundled_manifest
+skills/.curator_backups/
+
 # 临时
 *.tmp
 *.swp
