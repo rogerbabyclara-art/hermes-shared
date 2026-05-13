@@ -1,0 +1,5 @@
+name,proxy,fingerprint_seed,note
+acct1-jp-tokyo,http://user1:pass1@geo.example.com:12321,1001,Azure-A
+acct2-jp-osaka,http://user2:pass2@geo.example.com:12322,1002,Azure-B
+acct3-us-la,http://user3:pass3@geo.example.com:12323,1003,Google account
+acct4-via-hk,http://127.0.0.1:7890,1004,Through HK relay

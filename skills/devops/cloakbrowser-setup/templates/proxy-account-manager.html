@@ -1,0 +1,91 @@
+<!--
+  AdsPower-style multi-account manager table skeleton.
+  Copy into renderer/index.html under a sub-tab pane.
+  Companion JS pattern: see references/adspower-style-account-manager-ui.md
+  Companion CSS classes used here: ad-status, ad-chip, ad-ip-link, ad-inline-edit,
+  proxy-row-sel, proxy-row-running, proxy-row-locked, proxy-batch-bar, proxy-search,
+  proxy-filter-chk, proxy-batch-info. Define these in style.css to match dark theme.
+-->
+
+<div id="proxy-pane-accounts" class="proxy-pane active">
+
+  <!-- TOP BAR: main actions + search + quick filter -->
+  <div class="proxy-top-bar">
+    <button id="proxy-btn-reload" class="az-action-btn compact">🔄 刷新</button>
+    <button id="proxy-btn-batch-create" class="az-action-btn compact green">📦 批量建账号</button>
+    <button id="proxy-btn-add-single" class="az-action-btn compact">+ 单加</button>
+    <input id="proxy-acc-search" class="proxy-search"
+           placeholder="搜索: 编号 / 名称 / 标签 / 备注 / IP / 地区" />
+    <label class="proxy-filter-chk">
+      <input type="checkbox" id="proxy-flt-running" /> 仅看已打开
+    </label>
+    <span class="proxy-stats" id="proxy-stats">—</span>
+  </div>
+
+  <!-- BATCH BAR: appears when selected.size > 0 (toggle .hidden) -->
+  <div id="proxy-batch-bar" class="proxy-batch-bar hidden">
+    <span class="proxy-batch-info">已选 <b id="proxy-sel-n">0</b> 个</span>
+    <button id="proxy-batch-open" class="az-action-btn compact green">▶ 批量打开</button>
+    <button id="proxy-batch-close" class="az-action-btn compact">⏹ 批量关闭</button>
+    <button id="proxy-batch-tag" class="az-action-btn compact">🏷 加标签</button>
+    <button id="proxy-batch-untag" class="az-action-btn compact">✂ 去标签</button>
+    <button id="proxy-batch-note" class="az-action-btn compact">📝 改备注</button>
+    <button id="proxy-batch-delete" class="az-action-btn compact red">🗑 批量删</button>
+    <button id="proxy-batch-clear" class="az-action-btn compact ghost">✕ 取消选择</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="proxy-table-wrap">
+    <table class="proxy-table proxy-acc-table-v2" id="proxy-acc-table">
+      <thead>
+        <tr>
+          <th style="width:36px"><input type="checkbox" id="proxy-sel-all" /></th>
+          <th style="width:54px">编号</th>
+          <th style="width:120px">名称</th>
+          <th style="width:80px">状态</th>
+          <th style="width:170px">IP · 地区</th>
+          <th style="width:200px">标签</th>
+          <th>备注</th>
+          <th style="width:100px">上次打开</th>
+          <th style="width:200px;text-align:right">操作</th>
+        </tr>
+      </thead>
+      <tbody id="proxy-acc-tbody">
+        <!-- Renderer fills this. Empty-state row template: -->
+        <tr><td colspan="9" class="proxy-empty">
+          还没有账号 → 先去 [IP 池] 导入代理, 然后回来 [📦 批量建账号]
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!--
+  Per-row template that the renderer should emit (for reference):
+
+  <tr data-name="C001" class="proxy-row-running">
+    <td><input type="checkbox" class="proxy-row-chk" /></td>
+    <td class="ad-seq">001</td>
+    <td class="ad-name" data-edit="name">C001</td>
+    <td><span class="ad-status running">● 已打开</span></td>
+    <td>
+      <div class="ad-ip-line">
+        <code class="ad-ip-link" data-ipid="ip-001">ip-001</code>
+        <span class="ad-ip-host">37.19.205.154</span>
+      </div>
+      <div class="ad-geo">JP / Tokyo / Datacamp</div>
+    </td>
+    <td class="ad-tags" data-edit="tags">
+      <span class="ad-chip">azure<span class="ad-chip-x" data-act="tag-del" data-tag="azure">×</span></span>
+      <button class="ad-chip-add" data-act="tag-add" title="加标签">+</button>
+    </td>
+    <td class="ad-notes" data-edit="notes">手动注册中</td>
+    <td class="ad-last-open">2分前</td>
+    <td class="proxy-actions">
+      <button class="proxy-btn proxy-btn-stop" data-act="close">⏹ 关闭</button>
+      <button class="proxy-btn" data-act="test">测</button>
+      <button class="proxy-btn" data-act="replace-ip" title="换 IP">🔁</button>
+      <button class="proxy-btn red" data-act="delete">🗑</button>
+    </td>
+  </tr>
+-->

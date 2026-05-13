@@ -1,0 +1,51 @@
+# Hermes shared sync - gitignore
+# ============ 必须不能推上 GitHub 的东西 ============
+# 密钥/认证
+.env
+.env.*
+auth.json
+auth.lock
+auth.json.lock
+*.lock
+
+# 主配置 (含 API key) - 本地权威,不共享
+config.yaml
+config.yaml.bak*
+
+# 会话/日志/cron 历史 (每端各自,不共享)
+sessions/
+logs/
+cron/
+state.db
+state.db-*
+processes.json
+
+# 缓存/二进制
+cache/
+audio_cache/
+image_cache/
+bin/
+hermes-agent/
+hermes-webui/
+webui/
+node/
+node_modules/
+__pycache__/
+*.pyc
+.update_check
+.update_check_*
+
+# 配对/钩子(本机相关)
+pairing/
+hooks/
+
+# 临时
+*.tmp
+*.swp
+*.bak
+*.bak-*
+.DS_Store
+
+# 配置覆盖 (敏感)
+config_override.yaml
+.hermes_local

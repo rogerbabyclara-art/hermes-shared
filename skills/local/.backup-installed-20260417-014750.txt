@@ -1,0 +1,8 @@
+Installed local skills:
+- hermes-qa
+- hermes-review
+- hermes-ship
+- hermes-investigate
+
+Rollback:
+rm -rf /root/.hermes/skills/local/hermes-qa        /root/.hermes/skills/local/hermes-review        /root/.hermes/skills/local/hermes-ship        /root/.hermes/skills/local/hermes-investigate

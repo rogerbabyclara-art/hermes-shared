@@ -1,0 +1,11 @@
+[Unit]
+Description=RSS Monitor Config Panel
+After=network.target
+
+[Service]
+ExecStart=/home/dev/.hermes/hermes-agent/.venv/bin/python3.11 /home/dev/.hermes/scripts/rss_panel.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

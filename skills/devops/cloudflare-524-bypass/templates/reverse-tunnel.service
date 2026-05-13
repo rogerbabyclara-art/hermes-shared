@@ -1,0 +1,14 @@
+[Unit]
+Description=Reverse tunnel __SERVICE__ __VM_PORT__ to VPS __VPS_IP__:__VPS_PORT__
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment="AUTOSSH_GATETIME=0"
+ExecStart=/usr/bin/sshpass -p '__VPS_PASSWORD__' /usr/bin/autossh -M 0 -N -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -o StrictHostKeyChecking=no -R 0.0.0.0:__VPS_PORT__:127.0.0.1:__VM_PORT__ root@__VPS_IP__
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
