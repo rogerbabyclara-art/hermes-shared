@@ -8,8 +8,6 @@ NEWAPI for rogerbabyclara.online: VM 192.168.1.9 (sshpass 'dev' wrong, pw not ca
 §
 Hermes TTS edge voice: zh-CN-XiaoxiaoNeural. Edge TTS returns empty audio silently on locale mismatch.
 §
-YouTube监控cron job (job_id: 0e026720f658)，每天UTC 09:00，发到群 -5294966218。RSS论坛推送 cron (job_id: 0748b33b5633)，每15分钟，发到群 -5294966218。脚本：~/.hermes/scripts/yt_check_new.py, rss_check_new.py。blogwatcher-cli在~/.local/bin/。send_message超时通过换新代理解决。
-§
 azure项目三代:V1=D:\Projects\azure-auto-reg,V2=azure-auto-reg-v2(5400行flow.js),V3=D:\Projects\form-helper-v2(目录v2实是V3)。启动v2.bat dash:7777。内核~\.cloakbrowser\。cliproxy us.cliproxy.io:3010。v2rayN+HK 43.161.248.224。C001-C100=profile,CSV serial独立。**核心UX**:FORM1跳captcha→手动过→自动识别续跑,靠alertAndWait+check()双重判定,重构必保。
 §
 **43.161.248.224 (ubuntu/Opgzs123!, VM-0-11-ubuntu)** = NEWAPI 主站本身, 同机跑:3000+:3002+OpenClaw gateway:18789+proxy-router:9999+nginx+2 Postgres. **Hermes 未装** (~/.hermes 不存在, 无 systemd unit). 部署 TG bot 需现装. 43.161 段非香港(待核实).

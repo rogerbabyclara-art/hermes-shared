@@ -25,15 +25,22 @@ blogwatcher-cli (scan)
 
 ## Installation
 
-`blogwatcher-cli` binary is at `/home/dev/.local/bin/blogwatcher-cli` (v0.2.0).
+`blogwatcher-cli` binary lives at `~/.local/bin/blogwatcher-cli` (statically-linked Go ELF, ~17MB). Works on any x86_64 Linux.
 
 Install if missing:
 ```bash
-mkdir -p /home/dev/.local/bin
-curl -sL --proxy socks5h://91575d8a92:y0O65lbtnkwv0HvOTes0B0cN@3.115.250.37:11080 \
-  https://github.com/JulienTant/blogwatcher-cli/releases/latest/download/blogwatcher-cli_linux_amd64.tar.gz \
-  | tar xz -C /home/dev/.local/bin blogwatcher-cli
+mkdir -p ~/.local/bin
+# If host has internet (e.g. HK / overseas VPS): direct
+curl -sL https://github.com/JulienTant/blogwatcher-cli/releases/latest/download/blogwatcher-cli_linux_amd64.tar.gz \
+  | tar xz -C ~/.local/bin blogwatcher-cli
+# If host needs proxy (e.g. mainland China): prefix with HTTPS_PROXY=socks5h://...
 ```
+
+### Cross-host migration (copy from existing install)
+
+Because the binary is statically linked and the SQLite DB is portable, the fastest way to clone the whole stack to a new host is `scp` + path adjustment. **The script paths in this skill assume `~` not `/home/dev/`** — they work for any user. If you see old `/home/dev/...` hardcodes anywhere, patch them to `Path.home() / ...` or `os.environ.get("BW_BIN")`.
+
+See `references/cross-host-migration.md` for the verified end-to-end workflow.
 
 ## Configured Sources
 
@@ -64,10 +71,10 @@ Wrong (will fail): `blogwatcher-cli add --name "r/LocalLLaMA" --feed "..."` — 
 
 A Flask-based config panel runs as a persistent systemd user service:
 
-- **URL**: http://192.168.1.9:8765
+- **URL**: `http://<host-ip>:8765` (e.g. originally `http://192.168.1.9:8765` on the home VM; whatever LAN/WAN IP the host has)
 - **Service**: `rss-panel.service` (systemctl --user)
 - **Script**: `~/.hermes/scripts/rss_panel.py`
-- **Python**: `/home/dev/.hermes/hermes-agent/.venv/bin/python3.11` (Flask is in hermes-agent venv)
+- **Python**: must be `<HERMES_HOME>/hermes-agent/.venv/bin/python3.11` (Flask is in the hermes-agent venv, not system python). Adjust path per host — e.g. `/home/ubuntu/.hermes/...` on HK2, `/home/dev/.hermes/...` on the home VM.
 
 Features: keyword add/delete (tag UI), interval change (auto-syncs cron schedule in scheduler.db), source add/delete (auto feed_url inference for Reddit).
 
@@ -109,9 +116,14 @@ Current: `公益 中转 api 4.7 便宜 azure claude gpt hermes 免费 节点 机
 
 ## Scripts & Templates
 
-- `scripts/rss_check_new.py` — main scan script (reads config, syncs blogwatcher, keyword filter, JSON output)
+- `scripts/rss_check_new.py` — main scan script (LLM-agent mode: outputs JSON, cron prompt does formatting). **Portable** — no hardcoded paths or proxy. Set `RSS_PROXY` env var if your host needs a proxy.
+- `scripts/rss_push_noagent.py` — **no_agent mode** alternative: scan + format + emit final Telegram text in one shot, **no LLM call**. Use when cron+LLM is flaky (see `references/no-agent-mode.md`) or when you just want to skip the LLM tax for a fixed-template task.
+- `scripts/yt_check_new.py` — YouTube channel RSS scan + dedup via `yt_watched.json`. Set `YT_PROXY` for hosts that need proxy.
 - `scripts/rss_panel.py` — Flask config panel (port 8765, dark UI, keyword/source/interval management)
 - `templates/rss-panel.service` — systemd user service unit for the panel
+- `references/cross-host-migration.md` — verified workflow for moving the whole stack between Hermes hosts (e.g. on-prem → cloud)
+- `references/proxy-vless-probes.md` — benchmarking proxies/VLESS nodes before changing cron scripts
+- `references/no-agent-mode.md` — when/how to switch cron to `no_agent: True` (bypasses cron LLM api_key/api_mode bugs) + TG bot polling single-owner rule
 
 Deploy panel from scratch:
 ```bash
@@ -127,12 +139,12 @@ python3 ~/.hermes/scripts/rss_check_new.py
 
 ## Cron Job
 
-- **Job ID**: `0748b33b5633`
+- **Job ID**: `0748b33b5633` (original on 192.168.1.9; will differ per host after re-registration)
 - **Name**: RSS论坛帖子推送
-- **Schedule**: `*/15 * * * *`
+- **Schedule**: `*/60 * * * *` (hourly — was documented as `*/15` historically but actual jobs.json shows hourly)
 - **Script**: `rss_check_new.py`
 - **Toolsets**: `web` only (no terminal needed)
-- **Deliver**: `telegram:-5294966218` (group, not DM)
+- **Deliver**: `telegram:-5294966218` (group, not DM) — **target group must already exist in `~/.hermes/channel_directory.json` on the host running cron**. Adding the bot to the group is not enough; the bot needs to receive at least one message in the group for the gateway to register it.
 
 ### Reading/modifying the prompt
 
@@ -192,9 +204,22 @@ id, blog_id, title, url, published_date, discovered_date, is_read, categories
 
 Reference: see `references/proxy-vless-probes.md` for the reusable workflow to benchmark SOCKS proxies and temporary VLESS/Cloudflare nodes with sing-box before changing cron scripts.
 
-All RSS fetches use `socks5h://91575d8a92:y0O65lbtnkwv0HvOTes0B0cN@3.115.250.37:11080` via `HTTPS_PROXY` / `HTTP_PROXY` env vars passed to the scan subprocess.
+**Proxy is OPTIONAL.** Whether you need one depends on the host's geography:
 
-Updated 2026-05-05 (old `45.38.111.11:5926` confirmed dead). Same credentials apply to hermes-gateway (`~/.config/systemd/user/hermes-gateway.service.d/proxy.conf`) and both rss/yt scripts.
+| Host location | Linux.do / NodeSeek / V2EX | Reddit | YouTube |
+|---|---|---|---|
+| Mainland China (e.g. 192.168.1.9) | direct ✅ | **needs proxy** | **needs proxy** |
+| HK / overseas VPS (e.g. HK2 43.161.254.31) | direct ✅ | direct ✅ | direct ✅ |
+
+**Script behavior** (current versions): both `rss_check_new.py` and `yt_check_new.py` read `RSS_PROXY` / `YT_PROXY` from environment. **Empty = direct.** Do NOT hardcode proxy URLs in the scripts themselves — older revisions had `socks5h://93eb832fc3:...@174.139.197.25:11080` baked into `rss_check_new.py` and that broke portability when migrating to overseas hosts.
+
+If you need to set a proxy on a per-host basis:
+```bash
+# In ~/.hermes/cron/jobs.json job's prompt, or as systemd Environment=, or in a wrapper script
+export RSS_PROXY=socks5h://user:pass@host:port
+```
+
+Useful trick: `curl --proxy ""` (empty string) **disables** the proxy for that curl call — used in `yt_check_new.py` when `PROXY=""`.
 
 ### Gateway proxy startup pitfall
 

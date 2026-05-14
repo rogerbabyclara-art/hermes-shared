@@ -1,0 +1,66 @@
+# Hermes shared sync - .gitignore
+# Copy verbatim to $HERMES_HOME/.gitignore on the FIRST device before `git add .`.
+# Each ignored item is here for a specific reason — don't remove lines without
+# reading `hermes-multi-device-sync` SKILL.md "What syncs vs what doesn't".
+
+# ============ Secrets / auth (NEVER push) ============
+.env
+.env.*
+auth.json
+auth.lock
+auth.json.lock
+*.lock
+
+# ============ Main config (per-device, NOT shared) ============
+# Holds API keys, base_url (often device-specific), model preferences.
+config.yaml
+config.yaml.bak*
+config_override.yaml
+.hermes_local
+
+# ============ Session/log/cron history (per-device) ============
+sessions/
+logs/
+cron/
+state.db
+state.db-*
+processes.json
+
+# ============ Caches and installed binaries (regenerate per-device) ============
+cache/
+audio_cache/
+image_cache/
+bin/
+hermes-agent/
+hermes-webui/
+webui/
+node/
+node_modules/
+__pycache__/
+*.pyc
+.update_check
+.update_check_*
+
+# ============ Machine-bound runtime ============
+pairing/
+hooks/
+
+# ============ Hermes runtime caches (auto-regenerated) ============
+.skills_prompt_snapshot.json
+.curator_state
+.usage.json
+.bundled_manifest
+.tirith-install-failed
+
+# Curator state lives under skills/ — must be excluded explicitly
+skills/.curator_state
+skills/.usage.json
+skills/.bundled_manifest
+skills/.curator_backups/
+
+# ============ Tempfiles ============
+*.tmp
+*.swp
+*.bak
+*.bak-*
+.DS_Store
